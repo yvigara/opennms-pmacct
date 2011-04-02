@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pmacct-datacollection-config  
+    xmlns:pmacct-dc="http://xmlns.opennms.org/xsd/config/pmacct-datacollection" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:schemaLocation="http://xmlns.opennms.org/xsd/config/pmacct-datacollection http://www.opennms.org/xsd/config/pmacct-datacollection-config.xsd" 
+    rrdRepository="/var/lib/opennms/rrd/snmp/" >
+  <pmacct-collection name="pmacct-bandwidth">
+    <rrd step="300">
+      <rra>RRA:AVERAGE:0.5:1:2016</rra>
+      <rra>RRA:AVERAGE:0.5:12:1488</rra>
+      <rra>RRA:AVERAGE:0.5:288:366</rra>
+      <rra>RRA:MAX:0.5:288:366</rra>
+      <rra>RRA:MIN:0.5:288:366</rra>
+    </rrd>
+    <attributes>
+        <attrib alias="pmacctInbound"  type="gauge" pmacct-options=" -c dst_host -N %h -p /var/lib/pmacct/in.pipe -r"/>
+        <attrib alias="pmacctOutbound" type="gauge" pmacct-options=" -c src_host -N %h -p /var/lib/pmacct/out.pipe -r"/>
+    </attributes>
+  </pmacct-collection>
+</pmacct-datacollection-config>

@@ -1,0 +1,66 @@
+1.Intro
+
+The opennms-pmacct project aim to be a generic Netflow collector.
+It collects data from the pmacct tool (http://www.pmacct.net).
+Collected data are stored in the <rrd_base>/snmp/<nodeid>/<host_address> directory. 
+
+2.Installation
+
+2.1.PMacct installation/configuration
+
+Install pmacct/nfacct on your OpenNMS server.
+To collect netflow flows from an existing equipement (Switch, router, firewall,...), 
+copy the opennms-pmacct/conf/pmacct/nfacctd.conf to the /etc/pmacct directory 
+Change <YOUR-IP> with you OpenNMS Ip and <LISTEN-PORT> with the port.   
+Launch the nfacct daemon.
+Configure your network equipement to send netflows to your OpenNMS server.
+Verify that pmacct collect flows from your equipements using the followin command :
+ # pmacct -p /var/lib/pmacct/out.pipe -s
+
+2.2.Opennms-pmacct installation
+
+Compile this project using maven (with the "mvn package" command).
+Copy the opennms-pmacct/target/opennms-pmacct-<VERSION>.jar file in the $OPENNMS_HOME/lib directory
+(/usr/share/opennms/lib under Debian Lenny).  
+
+2.3.Opennms-pmacct bandwidth sample
+
+Copy the opennms-pmacct/conf/opennms/pmacct-datacollection-config.xml to the $OPENNMS_HOME/etc directory
+
+Edit $OPENNMS_HOME/etc/collectd-configuration.xml and add the following configuration : 
+
+<service name="PMACCT-BW" interval="300000" user-defined="false" status="on">
+    <parameter key="collection" value="pmacct-bandwidth"/>
+    <parameter key="thresholding-enabled" value="false"/>
+</service>
+
+<collector service="PMACCT-BW" class-name="org.opennms.netmgt.collectd.PmacctCollector"/>
+
+In snmp-graph.properties add the value "pmacct.bandwidth" to the property "reports" 
+and add the following graph definition :  
+
+report.pmacct.bandwidth.name=PMACCT Bandwidth
+report.pmacct.bandwidth.columns=pmacctOutbound,pmacctInbound
+report.pmacct.bandwidth.type=interfaceSnmp
+report.pmacct.bandwidth.command=--title="Bandwidth" \
+ --vertical-label="Bits Per Second" \
+ DEF:out={rrd1}:pmacctOutbound:AVERAGE \
+ DEF:outMin={rrd1}:pmacctOutbound:MIN \
+ DEF:outMax={rrd1}:pmacctOutbound:MAX \
+ DEF:in={rrd2}:pmacctInbound:AVERAGE \
+ DEF:inMin={rrd2}:pmacctInbound:MIN \
+ DEF:inMax={rrd2}:pmacctInbound:MAX \
+ CDEF:outNeg=0,out,- \
+ AREA:outNeg#0000ff:"Out" \
+ GPRINT:out:AVERAGE:" Avg \\: %8.2lf %s" \
+ GPRINT:out:MIN:"Min  \\: %8.2lf %s" \
+ GPRINT:out:MAX:"Max  \\: %8.2lf %s\\n" \
+ AREA:in#00ff00:"In" \
+ GPRINT:in:AVERAGE:" Avg \\: %8.2lf %s" \
+ GPRINT:in:MIN:"Min  \\: %8.2lf %s" \
+ GPRINT:in:MAX:"Max  \\: %8.2lf %s\\n"
+
+Restart your Opennms server.
+Add the service "PMACCT-BW" to the hosts you want monitor the bandwidth. 
+Wait 5 minutes and enjoy.
+ 
