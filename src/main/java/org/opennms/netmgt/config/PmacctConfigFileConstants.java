@@ -3,9 +3,11 @@
 //
 // OpenNMS(R) is Copyright (C) 2002-2008 The OpenNMS Group, Inc. All rights
 // reserved.
-// OpenNMS(R) is a derivative work, containing both original code, included code
+// OpenNMS(R) is a derivative work, containing both original code, included
+// code
 // and modified
-// code that was published under the GNU General Public License. Copyrights for
+// code that was published under the GNU General Public License. Copyrights
+// for
 // modified
 // and included code are below.
 //
@@ -23,7 +25,8 @@
 // 2003 Feb 04: Added Key SNMP Custom Reports
 // 2002 Nov 10: Added a new XML file: webui-colors.xml
 //
-// Original code base Copyright (C) 1999-2001 Oculan Corp. All rights reserved.
+// Original code base Copyright (C) 1999-2001 Oculan Corp. All rights
+// reserved.
 //
 // This program is free software; you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -51,59 +54,53 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import org.opennms.core.utils.LogUtils;
-import org.opennms.netmgt.ConfigFileConstants;
+import org.opennms.core.utils.ConfigFileConstants;
 
 /**
  * @author <a href="mailto:yann@atomes.com">Yann Vigara</a>
  */
-public class PmacctConfigFileConstants
-{
+public class PmacctConfigFileConstants {
 
     public static final int PMACCT_COLLECTION_CONFIG_FILE_NAME;
 
     private static final String[] FILE_ID_TO_NAME;
 
-    static
-    {
+    static {
         PMACCT_COLLECTION_CONFIG_FILE_NAME = 81;
         FILE_ID_TO_NAME = new String[82];
         FILE_ID_TO_NAME[PMACCT_COLLECTION_CONFIG_FILE_NAME] = "pmacct-datacollection-config.xml";
     }
 
-    public static final File getFile(int id)
-    throws IOException
-    {
+    public static final File getFile(int id) throws IOException {
         // Recover the home directory from the system properties.
         String home = ConfigFileConstants.getHome();
 
         // Check to make sure that the home directory exists
         File fhome = new File(home);
-        if (!fhome.exists())
-        {
+        if (!fhome.exists()) {
             LogUtils.debugf(ConfigFileConstants.class,
-                "The specified home directory does not exist.");
-            throw new FileNotFoundException("The OpenNMS home directory \"" + home
-                + "\" does not exist");
+                            "The specified home directory does not exist.");
+            throw new FileNotFoundException("The OpenNMS home directory \""
+                    + home + "\" does not exist");
         }
 
         String rfile = getFileName(id);
-        File frfile = new File(home + File.separator + "etc" + File.separator + rfile);
-        if (!frfile.exists())
-        {
+        File frfile = new File(home + File.separator + "etc" + File.separator
+                + rfile);
+        if (!frfile.exists()) {
             File frfileNoEtc = new File(home + File.separator + rfile);
-            if (!frfileNoEtc.exists())
-            {
-                throw new FileNotFoundException("The requested file '" + rfile
-                    + "' could not be found at '" + frfile.getAbsolutePath() + "' or '"
-                    + frfileNoEtc.getAbsolutePath() + "'");
+            if (!frfileNoEtc.exists()) {
+                throw new FileNotFoundException("The requested file '"
+                        + rfile + "' could not be found at '"
+                        + frfile.getAbsolutePath() + "' or '"
+                        + frfileNoEtc.getAbsolutePath() + "'");
             }
         }
 
         return frfile;
     }
 
-    public static final String getFileName(int id)
-    {
+    public static final String getFileName(int id) {
         return FILE_ID_TO_NAME[id];
     }
 }
